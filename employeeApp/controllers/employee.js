@@ -8,7 +8,7 @@ router.post('/employee', async (req, res) => {
     // console.log(req.body);
     const employee = new Employee(req.body);
     await employee.save();
-    res.status(201).send(employee);
+    res.status(201).send({message:"Successfully created an employee",data:employee});
   } catch (error) {
     res.status(400).send(error);
   }
@@ -28,7 +28,7 @@ router.get('/employee', async (req, res) => {
       res.status(200).send(employees);
     }
   } catch (error) {
-    res.status(500).send(error);
+    res.status(400).send(error);
   }
 });
 
@@ -57,19 +57,19 @@ router.get('/employee/getone', async (req, res) => {
       return res.status(404).send({message: "employee not found"});
     }
   } catch (error) {
-    res.status(500).send(error);
+    res.status(400).send(error);
   }
 });
 
 // Define a route to update an employee by ID
-router.patch('/employee/:id', async (req, res) => {
+router.put('/employee/:id', async (req, res) => {
   try {
     if(!req.body.employeeId || req.params.id == req.body.employeeId ){
       const employee = await Employee.findOneAndUpdate({employeeId : req.params.id}, req.body, { new: true, runValidators: true });
       if (!employee) {
         return res.status(404).send({message: "employee not found"});
       }
-      res.status(200).send(employee);
+      res.status(200).send({message:"Successfully updated an employee",data:employee});
     }
     else{
       res.status(404).send({message:"Can't update the employeeId"});
@@ -86,16 +86,16 @@ router.delete('/employee/:id', async (req, res) => {
     if(employee && !(employee.isActive)){
       const response = await Employee.findOneAndDelete({employeeId : req.params.id});
       
-      res.status(200).send(response);
+      res.status(200).send({message:"Successfully deleted an employee",data:response});
     }
     else{
       if (!employee) {
-        return res.status(404).send({message: "employee not found"});
+        return res.status(404).send({message: "Employee not found"});
       }
-      res.status(404).send({message: "employee is active now, can't delete."})
+      res.status(405).send({message: "Employee is active now, can't delete."})
     }
   } catch (error) {
-    res.status(500).send(error);
+    res.status(400).send(error);
   }
 });
 

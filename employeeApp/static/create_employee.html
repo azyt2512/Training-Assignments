@@ -108,62 +108,81 @@
     </header>
     <main class="p-4 mb-5">
         <div class="container border border-dark border-2 p-5 rounded">
-            <form class="row g-3 needs-validation" novalidate>
-                <div class="col-md-4">
-                    <label for="validationCustom01" class="form-label">Name</label>
-                    <input type="text" class="form-control" id="validationCustom01" name="name" value="" required>
-                    <div class="invalid-feedback">
-                        This field can't be empty
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <label for="validationCustom02" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="validationCustom02" name="email" value="" required>
-                    <div class="invalid-feedback">
-                        Please include '@' and a part of the '@' in email.
-                    </div>
-                </div>
-                <div class="col-md-4">
+            <form class="row g-3 needs-validation row-cols-lg-auto align-items-center" novalidate>
+                <div class="col-md-4 col-sm-12">
                     <label for="validationCustom01" class="form-label">EmployeeID</label>
                     <input type="text" class="form-control" id="validationCustom01" name="employeeId" value="" required>
                     <div class="invalid-feedback">
                         This field can't be empty
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-4 col-sm-12">
+                    <label for="validationCustom02" class="form-label">Name</label>
+                    <input type="text" class="form-control" id="validationCustom02" name="name" value="" required>
+                    <div class="invalid-feedback">
+                        This field can't be empty
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-12">
+                    <label for="validationCustom03" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="validationCustom03" name="email" value="" required>
+                    <div class="invalid-feedback">
+                        Please include '@' and a part of the '@' in email.
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-12">
                     <label for="validationCustom04" class="form-label">DOB</label>
                     <input type="date" class="form-control" id="validationCustom04" name="DOB" value="" required>
                     <div class="invalid-feedback">
                         Please include '@' and a part of the '@' in email.
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-4 col-sm-12">
                     <label for="validationCustom05" class="form-label">Department</label>
                     <select id="validationCustom05" class="form-select" name="department" required>
                         <option selected disabled value="">Choose...</option>
-                        <option>Software Engineer</option>
-                        <option>Data Analytics Engineer</option>
-                        <option>Manager</option>
+                        <option value="Software Engineer">Software Engineer</option>
+                        <option value="Data Analytics Engineer">Data Analytics Engineer</option>
+                        <option value="Manager">Manager</option>
+                        <option value="SDE">SDE</option>
                     </select>
                 </div>
-                <div class="col-md-4">
-                    <label for="validationCustom05" class="form-label">Employment Type</label>
-                    <select id="validationCustom05" class="form-select" name="employmentType" required>
+                <div class="col-md-4 col-sm-12">
+                    <label for="validationCustom06" class="form-label">Employment Type</label>
+                    <select id="validationCustom06" class="form-select" name="employmentType" required>
                         <option selected disabled value="">Choose...</option>
                         <option value="fulltime">Fulltime</option>
                         <option value="parttime">Parttime</option>
                         <option value="contract">Contract</option>
                     </select>
                 </div>
+                <div class="col-md-4 col-sm-12 d-none" id="active-checkbox">
+                    <label for="form-label" class="form-label">Active Status</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" value="true" name="isActive"
+                            id="flexRadioDefault1">
+                        <label class="form-check-label" for="flexRadioDefault">
+                            Active
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" value="false" name="isActive"
+                            id="flexRadioDefault2">
+                        <label class="form-check-label" for="flexRadioDefault">
+                            Not Active
+                        </label>
+                    </div>
+
+                </div>
                 <div class="col-12">
                     <button class="btn btn-primary" type="submit">Submit</button>
                 </div>
-                <div id="formstatus" class="d-none"></div>
+                <p id="formstatus" class="alert d-none p-2" role="alert"></p>
             </form>
         </div>
     </main>
-    <footer class="fixed-bottom text-center bg-primary" style="height: 80px;">
-        <div class="position-absolute top-50 start-50 translate-middle">
+    <footer class="fixed-bottom text-center bg-primary p-3">
+        <div class="">
             Copyright
             <span class="material-symbols-outlined align-middle">
                 copyright
@@ -176,6 +195,73 @@
     integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
     </script>
 <script>
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    let urlParam = '';
+    let currentEmployee = {};
+
+    function formatDate(date) {
+        var d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+
+        if (month.length < 2)
+            month = '0' + month;
+        if (day.length < 2)
+            day = '0' + day;
+
+        return [year, month, day].join('-');
+    }
+
+    console.log(formatDate('Sun May 11,2014'));
+
+    function getQueryParam() {
+        const urlParams = new URLSearchParams(window.location.search);
+        let id = urlParams.get('id');
+        const activeCheckbox = document.getElementById('active-checkbox');
+        if (id) {
+            const label = document.querySelector(`label[for=validationCustom01]`);
+            const input = document.getElementById('validationCustom01');
+            const activeCheckbox = document.getElementById('active-checkbox');
+
+            if (label && input) {
+                label.setAttribute('for', 'disabledTextInput');
+                input.setAttribute('id', 'disabledTextInput');
+                input.setAttribute('value', `${id}`);
+                input.setAttribute('readonly', true);
+                activeCheckbox.classList.remove('d-none');
+            }
+            urlParam = id;
+            populateFormValues(id);
+        }
+        else {
+            activeCheckbox.classList.add('d-none');
+        }
+        return;
+    }
+
+    async function populateFormValues(employeeId) {
+        try {
+            const res = await fetch(`http://localhost:8080/api/employee/getone?id=${employeeId}`, {
+                method: "GET",
+                headers: myHeaders,
+            });
+            const employee = await res.json();
+            if (employee) {
+                document.getElementById('validationCustom02').value = employee.name;
+                document.getElementById('validationCustom03').value = employee.email;
+                document.getElementById('validationCustom04').value = formatDate(employee.DOB);
+                document.getElementById('validationCustom05').value = employee.department;
+                document.getElementById('validationCustom06').value = employee.employmentType;
+                document.getElementById('flexRadioDefault1').checked = employee.isActive === true ? 'true' : 'false';
+                currentEmployee = employee;
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     // Example starter JavaScript for disabling form submissions if there are invalid fields
     (function () {
         'use strict'
@@ -187,26 +273,75 @@
         Array.prototype.slice.call(forms)
             .forEach(function (form) {
                 form.addEventListener('submit', function (event) {
-                    event.preventDefault()
                     if (!form.checkValidity()) {
-                        event.stopPropagation()
+                        event.preventDefault();
+                        event.stopPropagation();
                     }
-                    var formData = new FormData(form);
-
-                    // Convert FormData to a regular object
-                    var formObject = {};
-                    formData.forEach((value, key) => {
-                        formObject[key] = value;
-                    });
-                    createEmployee(JSON.stringify(formObject));
-
-                    form.classList.add('was-validated')
+                    else{
+                        event.preventDefault();
+                        var formData = new FormData(form);
+                        
+                        // Convert FormData to a regular object
+                        var formObject = {};
+                        formData.forEach((value, key) => {
+                            formObject[key] = value;
+                        });
+                        if (urlParam === '') {
+                            createEmployee(JSON.stringify(formObject));
+                        }
+                        else {
+                            editEmployee(JSON.stringify(formObject));
+                        }
+                    }
+                    form.classList.add('was-validated');
                 }, false);
             })
     })()
 
-    const myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
+    async function editEmployee(employee) {
+        try {
+            if (employee) {
+                employee.isActive = employee.isActive === 'true' ? true : false;
+                console.log(employee);
+
+                const res = await fetch(`http://localhost:8080/api/employee/${urlParam}`, {
+                    method: "PUT",
+                    body: employee, // Ensure the body is a JSON string
+                    headers: myHeaders,
+                });
+                const response = await res.json();
+                const status = document.getElementById('formstatus');
+                if (res.ok) {
+                    status.classList.remove('d-none');
+                    status.classList.add('alert-success');
+                    status.innerHTML = response.message;
+                } else {
+                    status.classList.remove('d-none');
+                    status.classList.add('alert-danger');
+                    status.innerHTML = 'Something went wrong';
+                }
+
+                setTimeout(() => {
+                    status.innerHTML = '';
+                    status.classList.add('d-none');
+                    status.classList.remove('alert-success', 'alert-danger');
+                }, 3000);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            const status = document.getElementById('formstatus');
+            status.classList.remove('d-none');
+            status.classList.add('alert-danger');
+            status.innerHTML = 'Something went wrong';
+
+            setTimeout(() => {
+                status.innerHTML = '';
+                status.classList.add('d-none');
+                status.classList.remove('alert-danger');
+            }, 3000);
+        }
+
+    }
 
     async function createEmployee(employee) {
         try {
@@ -216,39 +351,40 @@
                 headers: myHeaders,
             });
 
-            console.log(res);
-
             const status = document.getElementById('formstatus');
+            const response = await res.json();
             if (res.ok) {
                 status.classList.remove('d-none');
-                status.classList.add('text-success');
-                status.innerHTML = 'Successfully created';
+                status.classList.add('alert-success');
+                status.innerHTML = response.message;
             } else {
                 status.classList.remove('d-none');
-                status.classList.add('text-danger');
+                status.classList.add('alert-danger');
                 status.innerHTML = 'Something went wrong';
             }
 
             setTimeout(() => {
                 status.innerHTML = '';
                 status.classList.add('d-none');
-                status.classList.remove('text-success', 'text-danger');
-            }, 1000);
+                status.classList.remove('alert-success', 'alert-danger');
+            }, 3000);
         } catch (error) {
             console.error('Error:', error);
             const status = document.getElementById('formstatus');
             status.classList.remove('d-none');
-            status.classList.add('text-danger');
+            status.classList.add('alert-danger');
             status.innerHTML = 'Something went wrong';
 
             setTimeout(() => {
                 status.innerHTML = '';
                 status.classList.add('d-none');
-                status.classList.remove('text-danger');
-            }, 2000);
+                status.classList.remove('alert-danger');
+            }, 3000);
         }
     }
+
+    document.addEventListener('DOMContentLoaded', getQueryParam);
 </script>
 
 
-</html >
+</html>

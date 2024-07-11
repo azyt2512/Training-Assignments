@@ -21,7 +21,8 @@ const employeeSchema = new mongoose.Schema({
   },
   department: {
     type: String,
-    required: true
+    required: true,
+    enum: ['Software Engineer', 'Data Analytics Engineer', 'Manager', 'SDE']
   },
   isActive: {
     type: Boolean,
