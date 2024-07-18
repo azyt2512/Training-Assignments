@@ -5,7 +5,7 @@ const app = express();
 const PORT = 8080;  // Replace with your desired port
 
 // Replace with your actual MongoDB connection string
-const DB_URI = 'mongodb://localhost:27017/Employee_Management';
+const DB_URI = 'mongodb+srv://ajitpanigrahi:MXwsskX5yGqr5nxr@cluster0.ou7jgtm.mongodb.net/Employee_Management?retryWrites=true&w=majority&appName=Cluster0';
 const employeeRoutes = require('./controllers/employee');
 const clientRoutes = require('./controllers/client');
 

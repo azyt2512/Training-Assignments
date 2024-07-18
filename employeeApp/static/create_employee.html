@@ -214,8 +214,6 @@
         return [year, month, day].join('-');
     }
 
-    console.log(formatDate('Sun May 11,2014'));
-
     function getQueryParam() {
         const urlParams = new URLSearchParams(window.location.search);
         let id = urlParams.get('id');
@@ -360,7 +358,7 @@
             } else {
                 status.classList.remove('d-none');
                 status.classList.add('alert-danger');
-                status.innerHTML = 'Something went wrong';
+                status.innerHTML = response.message;
             }
 
             setTimeout(() => {
